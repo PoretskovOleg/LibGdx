@@ -12,25 +12,27 @@ public class MenuScreen extends BaseScreen {
     private Vector2 posObject;
     private Vector2 speedObject;
     private Vector2 targetPosition;
+    private Vector2 tempPosition;
 
     @Override
     public void show() {
         super.show();
         background = new Texture("sky.jpg");
         object = new Texture("badlogic.jpg");
-        posObject = new Vector2(0, 0);
-        speedObject = new Vector2(0, 0);
-        targetPosition = new Vector2(0, 0);
+        posObject = new Vector2();
+        speedObject = new Vector2();
+        targetPosition = new Vector2();
+        tempPosition = new Vector2();
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        if (targetPosition.sub(posObject).len2() <= speedObject.len2()) {
-            targetPosition.add(posObject);
+        tempPosition.set(posObject);
+        if (tempPosition.sub(targetPosition).len2() <= speedObject.len2()) {
             posObject.set(targetPosition);
+            speedObject.setZero();
         } else {
-            targetPosition.add(posObject);
             posObject.add(speedObject);
         }
         batch.begin();
@@ -48,7 +50,7 @@ public class MenuScreen extends BaseScreen {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         targetPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
-        speedObject = targetPosition.cpy().sub(posObject).nor();
+        speedObject.set(targetPosition.cpy().sub(posObject)).nor();
         return false;
     }
 }
