@@ -49,7 +49,7 @@ public class Logo extends Sprite {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         targetPosition.set(touch);
-        speed.set(touch.sub(this.pos)).setLength(SPEED_LEN);
+        speed.set(touch.sub(pos)).setLength(SPEED_LEN);
         return false;
     }
 }
