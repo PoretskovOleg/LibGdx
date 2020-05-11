@@ -3,54 +3,53 @@ package libgdx.stargame.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+
 import libgdx.stargame.base.BaseScreen;
+import libgdx.stargame.math.Rect;
+import libgdx.stargame.sprite.Background;
+import libgdx.stargame.sprite.Logo;
 
 public class MenuScreen extends BaseScreen {
 
-    private Texture background;
-    private Texture object;
-    private Vector2 posObject;
-    private Vector2 speedObject;
-    private Vector2 targetPosition;
-    private Vector2 tempPosition;
+    private Texture backgroundPicture;
+    private Texture logoPicture;
+    private Background background;
+    private Logo logo;
 
     @Override
     public void show() {
         super.show();
-        background = new Texture("sky.jpg");
-        object = new Texture("badlogic.jpg");
-        posObject = new Vector2();
-        speedObject = new Vector2();
-        targetPosition = new Vector2();
-        tempPosition = new Vector2();
+        backgroundPicture = new Texture("sky.jpg");
+        logoPicture = new Texture("badlogic.jpg");
+        background = new Background(backgroundPicture);
+        logo = new Logo(logoPicture);
+    }
+
+    @Override
+    public void resize(Rect worldBounds) {
+        background.resize(worldBounds);
+        logo.resize(worldBounds);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        tempPosition.set(posObject);
-        if (tempPosition.sub(targetPosition).len2() <= speedObject.len2()) {
-            posObject.set(targetPosition);
-            speedObject.setZero();
-        } else {
-            posObject.add(speedObject);
-        }
         batch.begin();
-        batch.draw(background, 0, 0, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.draw(object, posObject.x, posObject.y);
+        background.draw(batch);
+        logo.draw(batch);
         batch.end();
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        background.dispose();
+        backgroundPicture.dispose();
+        logoPicture.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        targetPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
-        speedObject.set(targetPosition.cpy().sub(posObject)).nor();
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        logo.touchDown(touch, pointer, button);
         return false;
     }
 }
