@@ -5,17 +5,26 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import libgdx.stargame.math.Rect;
+import libgdx.stargame.utils.Regions;
 
 public class Sprite extends Rect {
 
     protected float angle;
     protected float scale = 1f;
     protected TextureRegion[] regions;
-    protected int frame;
+    protected int frame = 0;
+    protected boolean destroyed;
+
+    public Sprite() {
+    }
 
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];
         regions[0] = region;
+    }
+
+    public Sprite(TextureRegion region, int rows, int cols, int frames) {
+        regions = Regions.split(region, rows, cols, frames);
     }
 
     public void update(float delta) {
@@ -39,7 +48,6 @@ public class Sprite extends Rect {
     }
 
     public void resize(Rect worldBounds) {
-
     }
 
     public boolean touchDown(Vector2 touch, int pointer, int button) {
@@ -50,7 +58,7 @@ public class Sprite extends Rect {
         return false;
     }
 
-    public boolean touchDragged(Vector2 touch, int pointer) {
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
 
@@ -68,5 +76,17 @@ public class Sprite extends Rect {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public void destroy() {
+        destroyed = true;
+    }
+
+    public void flushDestroy() {
+        destroyed = false;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

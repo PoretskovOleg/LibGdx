@@ -1,55 +1,99 @@
 package libgdx.stargame.screen;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import libgdx.stargame.base.BaseScreen;
 import libgdx.stargame.math.Rect;
 import libgdx.stargame.sprite.Background;
-import libgdx.stargame.sprite.Logo;
+import libgdx.stargame.sprite.ButtonExit;
+import libgdx.stargame.sprite.ButtonPlay;
+import libgdx.stargame.sprite.Star;
+
 
 public class MenuScreen extends BaseScreen {
 
-    private Texture backgroundPicture;
-    private Texture logoPicture;
+    private final Game game;
+    private Texture bg;
     private Background background;
-    private Logo logo;
+    private TextureAtlas atlas;
+    private ButtonExit buttonExit;
+    private ButtonPlay buttonPlay;
+    private Star[] stars;
+
+    public MenuScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
         super.show();
-        backgroundPicture = new Texture("sky.jpg");
-        logoPicture = new Texture("badlogic.jpg");
-        background = new Background(backgroundPicture);
-        logo = new Logo(logoPicture);
+        bg = new Texture("textures/bg.png");
+        background = new Background(bg);
+        atlas = new TextureAtlas("textures/menuAtlas.tpack");
+        buttonExit = new ButtonExit(atlas);
+        buttonPlay = new ButtonPlay(atlas, game);
+        stars = new Star[256];
+        for (int i = 0; i < stars.length; i++) {
+            stars[i] = new Star(atlas);
+        }
     }
 
     @Override
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
-        logo.resize(worldBounds);
+        buttonExit.resize(worldBounds);
+        buttonPlay.resize(worldBounds);
+        for (Star star : stars) {
+            star.resize(worldBounds);
+        }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        batch.begin();
-        background.draw(batch);
-        logo.draw(batch);
-        batch.end();
+        update(delta);
+        draw();
     }
 
     @Override
     public void dispose() {
+        bg.dispose();
+        atlas.dispose();
         super.dispose();
-        backgroundPicture.dispose();
-        logoPicture.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        logo.touchDown(touch, pointer, button);
+        buttonExit.touchDown(touch, pointer, button);
+        buttonPlay.touchDown(touch, pointer, button);
         return false;
     }
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer, int button) {
+        buttonExit.touchUp(touch, pointer, button);
+        buttonPlay.touchUp(touch, pointer, button);
+        return false;
+    }
+
+    private void update(float delta) {
+        for (Star star : stars) {
+            star.update(delta);
+        }
+    }
+
+    private void draw() {
+        batch.begin();
+        background.draw(batch);
+        for (Star star : stars) {
+            star.draw(batch);
+        }
+        buttonExit.draw(batch);
+        buttonPlay.draw(batch);
+        batch.end();
+    }
+
 }
